@@ -16043,13 +16043,6 @@ al cargar</translation>
     </message>
 </context>
 <context>
-    <name>StatusActivityCenterButton</name>
-    <message>
-        <source>Notifications</source>
-        <translation>Notificaciones</translation>
-    </message>
-</context>
-<context>
     <name>StatusAddressOrEnsValidator</name>
     <message>
         <source>Please enter a valid address or ENS name.</source>
