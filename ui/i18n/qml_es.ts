@@ -10676,6 +10676,10 @@ al cargar</translation>
         <source>Log in</source>
         <translation>Iniciar sesión</translation>
     </message>
+    <message>
+        <source>Manage profiles</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>LoginUserSelectorDelegate</name>
@@ -12668,6 +12672,10 @@ al cargar</translation>
     </message>
     <message>
         <source>Remove profile</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Manage profiles</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
