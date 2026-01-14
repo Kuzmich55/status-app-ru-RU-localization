@@ -47,6 +47,7 @@ Item {
     property bool swapEnabled
     property bool dAppsEnabled
     property bool dAppsVisible
+    property bool buyEnabled
 
     property var dAppsModel
 
@@ -389,6 +390,7 @@ Item {
             walletStore: RootStore
             transactionStore: root.transactionStore
             swapEnabled: root.swapEnabled
+            buyEnabled: root.buyEnabled
             networkConnectionStore: root.networkConnectionStore
             isCommunityOwnershipTransfer: footer.isHoldingSelected && footer.isOwnerCommunityCollectible
             communityName: {
