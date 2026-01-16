@@ -58,7 +58,7 @@ pipeline {
                 }
               }
             }
-            stage('E2E') {
+            stage('Linux E2E') {
               steps {
                 script {
                   linux_e2e = build(
