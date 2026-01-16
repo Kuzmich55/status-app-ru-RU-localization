@@ -1,5 +1,5 @@
 #!/usr/bin/env groovy
-library 'status-jenkins-lib@v1.9.36'
+library 'status-jenkins-lib@v1.9.39'
 
 /* Options section can't access functions in objects. */
 def isPRBuild = utils.isPRBuild()
@@ -56,7 +56,7 @@ pipeline {
     GOMODCACHE = "${env.WORKSPACE_TMP}/go-mod-cache"
     GOTMPDIR = "${env.WORKSPACE_TMP}"
     /* sets App Version in Settings */
-    VERSION = sh(script: "./scripts/version.sh", returnStdout: true).trim()
+    VERSION = "${utils.getVersion()}"
     /* Control output the filename */
     APP_TYPE = "${utils.getAppType()}"
     PLATFORM = "android/arm64"
@@ -97,29 +97,29 @@ pipeline {
     }
 
     stage('Build Android') {
-      steps { 
+      steps {
         script {
         app.buildSignedAndroid(target='mobile-build PACKAGE_TYPE=' + env.PACKAGE_TYPE, verbose=params.VERBOSE)
-        } 
+        }
       }
     }
 
     stage('Package') {
-      steps { 
+      steps {
         script {
           sh 'mkdir -p pkg'
           sh "cp -v ${env.STATUS_BINARY} ${env.STATUS_ARTIFACT}"
           if (env.IS_RELEASE_BRANCH == 'true') {
             sh "cp -v ${env.STATUS_AAB_BINARY} ${env.STATUS_AAB_ARTIFACT}"
           }
-        } 
+        }
       }
     }
 
     stage('Parallel Upload') {
       parallel {
         stage('Upload') {
-          steps { 
+          steps {
             script {
               env.PKG_URL = s5cmd.upload(env.STATUS_ARTIFACT)
               descLinks.APK = env.PKG_URL
@@ -129,18 +129,18 @@ pipeline {
 
         stage('Upload AAB') {
           when { expression { env.IS_RELEASE_BRANCH == 'true' } }
-          steps { 
+          steps {
             script {
               env.AAB_URL = s5cmd.upload(env.STATUS_AAB_ARTIFACT)
               descLinks.AAB = env.AAB_URL
-            } 
+            }
           }
         }
       }
     }
 
     stage('Archive') {
-      steps { 
+      steps {
         script {
           archiveArtifacts env.STATUS_ARTIFACT
           if (env.IS_RELEASE_BRANCH == 'true') {

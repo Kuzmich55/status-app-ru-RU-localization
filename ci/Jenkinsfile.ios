@@ -1,5 +1,5 @@
 #!/usr/bin/env groovy
-library 'status-jenkins-lib@v1.9.36'
+library 'status-jenkins-lib@v1.9.39'
 
 /* Options section can't access functions in objects. */
 def isPRBuild = utils.isPRBuild()
@@ -67,7 +67,7 @@ pipeline {
     GO_GENERATE_FAST_DIR = "${env.WORKSPACE_TMP}/go-generate-fast"
     XDG_CACHE_HOME = "${env.WORKSPACE_TMP}/.cache"
     /* sets App Version in Settings */
-    VERSION = sh(script: "./scripts/version.sh", returnStdout: true).trim()
+    VERSION = "${utils.getVersion()}"
     /* Control output the filename */
     APP_TYPE = "${utils.getAppType()}"
     /* iOS build configuration */

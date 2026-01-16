@@ -1,5 +1,5 @@
 #!/usr/bin/env groovy
-library 'status-jenkins-lib@v1.9.36'
+library 'status-jenkins-lib@v1.9.39'
 
 /* Options section can't access functions in objects. */
 def isPRBuild = utils.isPRBuild()
@@ -78,7 +78,7 @@ pipeline {
     /* Avoid weird bugs caused by stale cache. */
     QML_DISABLE_DISK_CACHE = 1
     /* Control output the filename */
-    VERSION = sh(script: "./scripts/version.sh", returnStdout: true).trim()
+    VERSION = "${utils.getVersion()}"
     STATUS_CLIENT_EXE = "pkg/${utils.pkgFilename(ext: 'exe', arch: getArch(), version: env.VERSION)}"
     /* 7zip archive filename */
     STATUS_CLIENT_7Z = "pkg/${utils.pkgFilename(ext: '7z', arch: getArch(), version: env.VERSION)}"
