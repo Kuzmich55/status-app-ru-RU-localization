@@ -29,6 +29,10 @@ SettingsContentBase {
     property ProfileStores.PrivacyStore privacyStore
     property ProfileStores.AdvancedStore advancedStore
 
+    property string errorDeletingDeviceMessage
+
+    signal deleteDeviceRequested(string installationId)
+
     ColumnLayout {
         id: layout
         width: root.contentWidth
@@ -63,6 +67,10 @@ SettingsContentBase {
                                  })
             }
 
+            function setupDeleteDevice(installationId) {
+                Global.openPopup(deleteDeviceDialogComponent, {installationId})
+            }
+
             function setupSyncing() {
                 root.devicesStore.generateConnectionStringAndRunSetupSyncingPopup(messageSyncingEnabled)
             }
@@ -92,6 +100,14 @@ SettingsContentBase {
             visible: root.devicesStore.devicesModule.devicesLoading
             horizontalAlignment: Text.AlignHCenter
             text: qsTr("Loading devices...")
+        }
+
+        StatusBaseText {
+            Layout.fillWidth: true
+            visible: !!root.errorDeletingDeviceMessage
+            horizontalAlignment: Text.AlignHCenter
+            text: qsTr("Error deleting device: %1").arg(root.errorDeletingDeviceMessage)
+            color: Theme.palette.dangerColor1
         }
 
         StatusBaseText {
@@ -142,9 +158,7 @@ SettingsContentBase {
                     d.setupUnpair(model.installationId)
                 }
                 onClicked: {
-                    if (deviceEnabled) {
-                        d.personalizeDevice(model)
-                    }
+                    d.personalizeDevice(model)
                 }
             }
         }
@@ -269,6 +283,7 @@ SettingsContentBase {
                 destroyOnClose: true
                 devicesStore: root.devicesStore
                 advancedStore: root.advancedStore
+                onDeleteDeviceRequested: installationId => d.setupDeleteDevice(installationId)
             }
         }
 
@@ -285,9 +300,10 @@ SettingsContentBase {
         Component {
             id: pairDeviceDialogComponent
             ConfirmationDialog {
+                id: pairDeviceDialog
+
                 property string installationId
 
-                id: pairDeviceDialog
                 destroyOnClose: true
                 headerSettings.title: qsTr("Pair Device")
                 confirmationText: qsTr("Are you sure you want to pair this device?")
@@ -298,7 +314,7 @@ SettingsContentBase {
                     if (error) {
                         pairDeviceDialog.confirmationText = qsTr("Error pairing device: %1").arg(error)
                     } else {
-                        Global.closePopup()
+                        pairDeviceDialog.close()
                     }
                 }
             }
@@ -307,9 +323,10 @@ SettingsContentBase {
         Component {
             id: unpairDeviceDialogComponent
             ConfirmationDialog {
+                id: unpairDeviceDialog
+
                 property string installationId
 
-                id: unpairDeviceDialog
                 destroyOnClose: true
                 headerSettings.title: qsTr("Unpair Device")
                 confirmationText: qsTr("Are you sure you want to unpair this device?")
@@ -319,8 +336,27 @@ SettingsContentBase {
                     if (error) {
                         unpairDeviceDialog.confirmationText = qsTr("Error unpairing device: %1").arg(error)
                     } else {
-                        Global.closePopup()
+                        unpairDeviceDialog.close()
                     }
+                }
+            }
+        }
+
+        Component {
+            id: deleteDeviceDialogComponent
+            ConfirmationDialog {
+                id: deleteDeviceDialog
+
+                property string installationId
+
+                destroyOnClose: true
+                headerSettings.title: qsTr("Delete Device")
+                confirmationText: qsTr("Are you sure you want to delete this device?\nThis action cannot be undone.")
+                confirmButtonLabel: qsTr("Delete")
+                onConfirmButtonClicked: {
+                    root.deleteDeviceRequested(installationId)
+                    root.errorDeletingDeviceMessage = ""
+                    deleteDeviceDialog.close()
                 }
             }
         }
