@@ -117,6 +117,8 @@ android {
         }
         debug {
             debuggable = true
+            applicationIdSuffix ".debug"
+            resValue "string", "app_name", "Status Debug"
         }
     }
 }
