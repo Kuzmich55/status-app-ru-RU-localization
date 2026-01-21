@@ -350,6 +350,7 @@ StatusSectionLayout {
 
         // PERMISISONS
         Loader {
+            id: permissionsSettingsPanelLoader
             active: false
             readonly property int sectionKey: Constants.CommunitySettingsSections.Permissions
             readonly property string sectionName: qsTr("Permissions")
@@ -372,6 +373,9 @@ StatusSectionLayout {
 
                 collectiblesModel: rootStore.collectiblesModel
                 channelsModel: rootStore.chatCommunitySectionModule.model
+                
+                saveInProgress: rootStore.chatCommunitySectionModule.permissionSaveInProgress
+                errorSaving: rootStore.chatCommunitySectionModule.errorSavingPermission
 
                 getTokenByKeyOrGroupKeyFromAllTokens: root.tokensStore.getTokenByKeyOrGroupKeyFromAllTokens
 
@@ -785,19 +789,13 @@ StatusSectionLayout {
     }
 
     Connections {
-        target: root.chatCommunitySectionModule
+        target: root.rootStore
 
-        function onOpenNoPermissionsToJoinPopup(communityName: string,
-                                                userName: string, communityId:
-                                                string, requestId: string) {
-            const properties = {
-                communityName: communityName,
-                userName: userName,
-                communityId: communityId,
-                requestId: requestId
+        function onPermissionSavedSuccessfully() {
+            if (!permissionsSettingsPanelLoader.active) {
+                return 
             }
-
-            Global.openPopup(noPermissionsPopupCmp, properties)
+            permissionsSettingsPanelLoader.item.goToPermissionsList()
         }
     }
 }
