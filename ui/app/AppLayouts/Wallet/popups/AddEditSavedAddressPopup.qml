@@ -12,12 +12,16 @@ import StatusQ.Popups.Dialog
 import utils
 import shared.stores as SharedStores
 import AppLayouts.Wallet.stores as WalletStores
+import AppLayouts.Profile.helpers
 
 StatusDialog {
     id: root
 
     required property WalletStores.RootStore store
     required property SharedStores.RootStore sharedRootStore
+    property var contactsModel
+
+    signal populateContactDetails(string publicKey)
 
     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
 
@@ -89,8 +93,9 @@ StatusDialog {
 
         property bool incorrectChecksum: {
             if (d.addressInputIsAddress) {
-                d.incorrectChecksum = !root.store.isChecksumValidForAddress(d.address)
+                return !root.store.isChecksumValidForAddress(d.address)
             }
+            return false
         }
 
         readonly property bool addressInputIsENS: !!d.ens &&
@@ -110,6 +115,33 @@ StatusDialog {
         property bool addressAlreadyAddedToSavedAddressesError: false
         property bool checkingContactsAddressInProgress: false
         property int contactsWithSameAddress: 0
+
+        property var sharedContactModelEntryLoader: Loader {
+            property string publicKey: ""
+
+            active: false
+
+            sourceComponent: ContactModelEntry {
+                id: contactModelEntry
+                publicKey: d.sharedContactModelEntryLoader.publicKey
+                contactsModel: root.contactsModel
+                onPopulateContactDetailsRequested: {
+                    root.populateContactDetails(d.sharedContactModelEntryLoader.publicKey)
+                }
+                onAvailableChanged: {
+                    if (contactModelEntry.available) {
+                        d.processContactDetails(contactModelEntry.contactDetails)
+                    }
+                }
+            }
+        }
+
+        function getContactModelEntry(pubkey) {
+            d.sharedContactModelEntryLoader.active = false
+            d.sharedContactModelEntryLoader.publicKey = pubkey
+            d.sharedContactModelEntryLoader.active = true
+            return d.sharedContactModelEntryLoader.item
+        }
 
         function checkIfAddressIsAlreadyAddedToWallet(address) {
             let account = root.store.getWalletAccount(address)
@@ -246,6 +278,35 @@ StatusDialog {
             root.store.createOrUpdateSavedAddress(d.name, d.address, d.ens, d.colorId)
             root.close()
         }
+
+        property var contactsToProcess: []
+
+        function processContactDetails(contactDetails) {
+            //Remove from list of contacts to process
+            let index = d.contactsToProcess.indexOf(contactDetails.publicKey)
+            if (index > -1) {
+                d.contactsToProcess.splice(index, 1)
+            }
+            // Process by adding to cards model
+            d.cardsModel.append({
+                type: AddEditSavedAddressPopup.CardType.Contact,
+                address: contactDetails.address,
+                title: ProfileUtils.displayName(contactDetails.localNickname, contactDetails.name, contactDetails.displayName, contactDetails.alias),
+                icon: contactDetails.icon,
+                emoji: "",
+                color: Utils.colorForColorId(root.Theme.palette, contactDetails.colorId),
+                onlineStatus: contactDetails.onlineStatus
+            })
+            // If there are still contacts to process, get their details
+            if (d.contactsToProcess.length > 0) {
+                const nextContactEntry = d.getContactModelEntry(d.contactsToProcess[0])
+                if (!nextContactEntry.available) {
+                    // Waiting for contact details to be populated
+                    return
+                }
+                d.processContactDetails(nextContactEntry.contactDetails)
+            }
+        }
     }
 
     Connections {
@@ -281,18 +342,14 @@ StatusDialog {
                 if (d.contactsWithSameAddress > 1)
                     addressInput.errorMessageCmp.text = qsTr("This address belongs to the following contacts")
 
+                d.contactsToProcess = accountsJson.map(account => account.contactId)
                 for (let i = 0; i < accountsJson.length; ++i) {
-                    let contact = Utils.getContactDetailsAsJson(accountsJson[i].contactId, true, true, true)
-                    d.cardsModel.append({
-                                            type: AddEditSavedAddressPopup.CardType.Contact,
-                                            address: accountsJson[i].address,
-                                            title: ProfileUtils.displayName(contact.localNickname, contact.name, contact.displayName, contact.alias),
-                                            icon: contact.icon,
-                                            emoji: "",
-                                            color: Utils.colorForColorId(root.Theme.palette, contact.colorId),
-                                            onlineStatus: contact.onlineStatus
-                                        })
-
+                    const contactEntry = d.getContactModelEntry(accountsJson[i].contactId)
+                    if (!contactEntry.available) {
+                        // Waiting for contact details to be populated
+                        continue
+                    }
+                    d.processContactDetails(contactEntry.contactDetails)
                 }
             }
             catch (e) {
@@ -458,7 +515,7 @@ StatusDialog {
                     }
                 }
 
-                onKeyPressed: {
+                onKeyPressed: (event) => {
                     d.submit(event)
                 }
 

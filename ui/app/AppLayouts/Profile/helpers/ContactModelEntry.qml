@@ -12,11 +12,12 @@ QObject {
 
     required property string publicKey
     required property var contactsModel
+    readonly property alias available: itemData.available
 
     signal populateContactDetailsRequested()
 
     onPublicKeyChanged: {
-        if (root.publicKey && contactsModel && !contactsModel.hasUser(root.publicKey)) {
+        if (root.publicKey && contactsModel && contactsModel.length && !contactsModel.hasUser(root.publicKey)) {
             // Fetch contact details
             root.populateContactDetailsRequested()
         }
@@ -26,6 +27,7 @@ QObject {
         readonly property var entry: itemData.item
 
         publicKey: root.publicKey
+        compressedPubKey:  entry.compressedPubKey ?? ""
         displayName: entry.displayName ?? ""
         ensName: entry.ensName ?? ""
         ensVerified: entry.isEnsVerified ?? false

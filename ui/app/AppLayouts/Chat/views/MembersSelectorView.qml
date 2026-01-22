@@ -5,6 +5,8 @@ import QtQml.Models
 import StatusQ.Controls
 import StatusQ.Components
 
+import AppLayouts.Profile.helpers
+
 import "private"
 
 import shared.stores
@@ -14,8 +16,10 @@ MembersSelectorBase {
     id: root
 
     property UtilsStore utilsStore
+    property var allContactsModel
 
     signal resolveENS(string address)
+    signal populateContactDetails(string pubkey)
 
     limitReached: model.count >= membersLimit - 1 // -1 because creator is not on the list of members when creating chat
 
@@ -32,15 +36,19 @@ MembersSelectorBase {
         d.processContact(resolvedPubKey)
     }
 
-    onEntryAccepted: if (suggestionsDelegate) {
-        if (root.limitReached)
-            return
-        if (d.addMember(suggestionsDelegate._pubKey, suggestionsDelegate.userName, suggestionsDelegate.nickName))
-            root.edit.clear()
+    onEntryAccepted: (suggestionsDelegate) => {
+        if (suggestionsDelegate) {
+            if (root.limitReached)
+                return
+            if (d.addMember(suggestionsDelegate._pubKey, suggestionsDelegate.userName, suggestionsDelegate.nickName))
+                root.edit.clear()
+        }
     }
 
-    onEntryRemoved: if (delegate) {
-        d.removeMember(delegate._pubKey)
+    onEntryRemoved: (delegate) => {
+        if (delegate) {
+            d.removeMember(delegate._pubKey)
+        }
     }
 
     edit.onTextChanged: {
@@ -72,6 +80,33 @@ MembersSelectorBase {
 
         property ListModel selectedMembers: ListModel {}
 
+        property var sharedContactModelEntryLoader: Loader {
+            property string publicKey: ""
+
+            active: false
+
+            sourceComponent: ContactModelEntry {
+                id: contactModelEntry
+                publicKey: d.sharedContactModelEntryLoader.publicKey
+                contactsModel: root.allContactsModel
+                onPopulateContactDetailsRequested: {
+                    root.populateContactDetails(d.sharedContactModelEntryLoader.publicKey)
+                }
+                onAvailableChanged: {
+                    if (contactModelEntry.available) {
+                        d.processContactDetails(contactModelEntry.contactDetails)
+                    }
+                }
+            }
+        }
+
+        function getContactModelEntry(pubkey) {
+            d.sharedContactModelEntryLoader.active = false
+            d.sharedContactModelEntryLoader.publicKey = pubkey
+            d.sharedContactModelEntryLoader.active = true
+            return d.sharedContactModelEntryLoader.item
+        }
+
         function lookupContact(value) {
             const urlContactData = Utils.parseContactUrl(value)
             if (urlContactData) {
@@ -97,13 +132,26 @@ MembersSelectorBase {
         }
 
         function processContact(publicKey) {
-            const contactDetails = Utils.getContactDetailsAsJson(publicKey, false)
-            if (contactDetails.publicKey === "") {
-                // not a valid key given
+            if (!publicKey) {
                 root.suggestionsDialog.forceHide = false
                 return
             }
 
+            let fullPubkey = publicKey
+            if (root.utilsStore.isCompressedPubKey(fullPubkey)) {
+                fullPubkey = root.utilsStore.getDecompressedPk(publicKey)
+            }
+            const contactEntry = d.getContactModelEntry(fullPubkey)
+
+            if (!contactEntry.available) {
+                // Waiting for contact details to be populated
+                return
+            }
+
+            processContactDetails(contactEntry.contactDetails)
+        }
+
+        function processContactDetails(contactDetails) {
             if (contactDetails.isContact) {
                 // Is a contact, we add their name to the list
                 root.pastedChatKey = contactDetails.publicKey
