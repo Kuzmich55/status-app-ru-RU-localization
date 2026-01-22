@@ -48,10 +48,9 @@ Column {
         id: d
 
         readonly property int radius: 16
+        readonly property bool cameraReady: cameraPermission.status === Qt.Granted
         property string errorMessage
         property int counter: 0
-
-        property bool showCamera: false
 
         function validateTag(tag) {
             for (let i in root.validators) {
@@ -66,6 +65,14 @@ Column {
         }
     }
 
+    CameraPermission {
+        id: cameraPermission
+        Component.onCompleted: {
+            if (cameraPermission.status !== Qt.PermissionStatus.Granted)
+                cameraPermission.request()
+        }
+    }
+
     Loader {
         id: cameraLoader
         active: true
@@ -73,11 +80,7 @@ Column {
         width: 330
         height: 330
 
-        CameraPermission {
-            id: cameraPermission
-        }
-
-        sourceComponent: d.showCamera && cameraPermission.status === Qt.Granted ? cameraComponent : btnComponent
+        sourceComponent: d.cameraReady ? cameraComponent : btnComponent
     }
 
     Component {
@@ -118,20 +121,6 @@ Column {
                     color: Theme.palette.directColor4
                 }
 
-                StatusButton {
-                    id: button
-                    Layout.alignment: Qt.AlignHCenter
-                    text: qsTr("Scan QR")
-                    onClicked: {
-                        loading = true
-                        cameraPermission.request()
-                        Backpressure.debounce(this, 250, () => {
-                            button.loading = false
-                            d.showCamera = true
-                        })()
-                    }
-                }
-
                 Item {
                     Layout.fillHeight: true
                     Layout.fillWidth: true
@@ -156,17 +145,25 @@ Column {
     }
 
     StatusBaseText {
-        visible: d.showCamera && !!text
+        visible: !!text
         width: parent.width
         height: visible ? implicitHeight : 0
         wrapMode: Text.WordWrap
         color: Theme.palette.dangerColor1
         horizontalAlignment: Text.AlignHCenter
-        text: d.errorMessage
+        text: {
+            if (!!d.errorMessage) {
+                return d.errorMessage
+            }
+            if (cameraPermission.status === Qt.Denied) {
+                return qsTr("Camera access denied. Please enable it in system settings.")
+            }
+            return ""
+        }
     }
 
     StatusBaseText {
-        visible: d.showCamera && cameraLoader.item.cameraAvailable
+        visible: d.cameraReady && cameraLoader.item?.cameraAvailable
         width: parent.width
         height: visible ? implicitHeight : 0
         wrapMode: Text.WordWrap
