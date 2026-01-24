@@ -77,6 +77,12 @@ pipeline {
         }
       }
     }
+ 
+    stage('QML Lint') {
+      steps {
+        sh 'make qml-lint'
+      }
+    }
 
     stage('Build StatusQ Tests') {
       steps {

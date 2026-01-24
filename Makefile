@@ -45,6 +45,7 @@ GIT_ROOT ?= $(shell git rev-parse --show-toplevel 2>/dev/null || echo .)
 	run-statusq-sanity-checker \
 	statusq-tests \
 	run-statusq-tests \
+	qml-lint \
 	storybook-build \
 	run-storybook \
 	run-storybook-tests \
@@ -339,6 +340,13 @@ statusq-clean:
 	echo -e "\033[92mCleaning:\033[39m StatusQ"
 	rm -rf $(STATUSQ_BUILD_PATH)
 	rm -rf $(STATUSQ_INSTALL_PATH)/StatusQ
+
+##
+##	Catch invalid QML
+##
+qml-lint:
+	echo -e "\033[92mRunning:\033[39m QML Lint"
+	./scripts/validate-qml.sh
 
 statusq-sanity-checker:
 	echo -e "\033[92mConfiguring:\033[39m StatusQ SanityChecker"
