@@ -27,21 +27,39 @@ function Install-Protobuf-Go {
     7z x -o="$env:USERPROFILE\go\bin" -y "$env:USERPROFILE\$ProtocGenZIP"
 }
 
+function Scoop-Install([string]$package, [string]$version) {
+    $fullName = "$package@$version"
+    if (Test-Path "/ProgramData/scoop/apps/$package/$version" -PathType Container) {
+        Write-Host "Already installed: $fullName"
+    } else {
+        Write-Host "Installing: $fullName"
+        scoop install --global "$fullName"
+    }
+    scoop reset "$fullName"
+    scoop hold --global "$package"
+}
+
 # Install Git and other dependencies
 function Install-Dependencies {
     Write-Host "Installing dependencies..."
     if (!(scoop bucket list | Where { $_.Name -eq "extras" })) {
         scoop bucket add extras
     }
-    scoop install --global go@1.24.7
-    scoop install --global protobuf@3.20.1
-    scoop install --global vcredist2022
-    scoop install --global cmake@3.31.6
-    scoop install --global `
-        7zip git dos2unix findutils `
-        wget rcedit inno-setup `
-        nim mingw-winlibs `
-        make gcc openssl-lts
+    scoop update
+    # Trying to 'hold' git breaks due to how hosts are bootstrapped.
+    scoop install --global git 7zip innounp dos2unix findutils wget rcedit
+    # Old versions can cause weird Scoop install errors.
+    scoop update --global 7zip innounp
+    # WARNING: Remember to update PATH in ci/Jenkinsfile.windows.
+    Scoop-Install 'go'            '1.24.7'
+    Scoop-Install 'nim'           '2.2.6'
+    Scoop-Install 'cmake'         '3.31.6'
+    Scoop-Install 'python'        '3.13.5'
+    Scoop-Install 'mingw-winlibs' '15.2.0-13.0.0-r5'
+    Scoop-Install 'vcredist2022'  '14.44.35211.0'
+    Scoop-Install 'protobuf'      '3.20.1'
+    Scoop-Install 'openssl-lts'   '3.0.18'
+    Scoop-Install 'inno-setup'    '6.5.4'
 }
 
 function Install-Qt-SDK {

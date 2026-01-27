@@ -867,6 +867,7 @@ $(STATUS_CLIENT_EXE): compile_windows_resources nim_status_client nim_windows_la
 	rcedit $(OUTPUT)/bin/Status.exe --set-icon $(OUTPUT)/resources/status.ico
 	rcedit $(OUTPUT)/Status.exe --set-icon $(OUTPUT)/resources/status.ico
 	cp $(DOTHERSIDE_LIBFILE) $(STATUSGO) $(STATUSKEYCARDGO) $(NIMSDS_LIBFILE) $(STATUSQ_INSTALL_PATH)/StatusQ/* $(OUTPUT)/bin/
+	cp "$(shell which libstdc++-6.dll)"     $(OUTPUT)/bin/
 	cp "$(shell which libgcc_s_seh-1.dll)"  $(OUTPUT)/bin/
 	cp "$(shell which libwinpthread-1.dll)" $(OUTPUT)/bin/
 	cp "$(shell which libcrypto-3-x64.dll)" $(OUTPUT)/bin/

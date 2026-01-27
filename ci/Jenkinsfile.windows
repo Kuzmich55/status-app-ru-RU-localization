@@ -73,9 +73,10 @@ pipeline {
     /* Explicitly set the QT version */
     QTDIR = "/c/Qt/6.9.2/msvc2022_64"
     GOPATH = "${WORKSPACE_TMP}/go"
+    GOBIN = "${WORKSPACE_TMP}/go/bin"
     GOCACHE = "${WORKSPACE_TMP}/gocache"
     GOTMPDIR = "${WORKSPACE_TMP}/gotmp"
-    PATH = "${PATH}:${GOPATH}/bin:${env.QTDIR}/bin:/c/Users/jenkins/go/bin"
+    PATH = "${assembePath([env.GOBIN,"${env.QTDIR}/bin","${env.HOME}/go/bin"])}"
     /* Avoid weird bugs caused by stale cache. */
     QML_DISABLE_DISK_CACHE = 1
     /* Control output the filename */
@@ -181,6 +182,38 @@ pipeline {
       cleanWs(disableDeferredWipeout: true)
       powershell "Remove-Item -Path '${env.WORKSPACE_TMP}' -Recurse -Force"
     }
+  }
+}
+
+/* Windows cannot be trusted to set PATH with correct order. */
+def assembePath(List<String> extraPaths) {
+  if (isUnix()) {
+    return "${env.PATH}:${extraPaths.join(':')}"
+  } else {
+    /* WARNING: Remember to update versions in scripts/windows_build_setup.ps1 */
+    def binPaths = [
+      'C:/Windows/system32/WindowsPowerShell/v1.0',
+      'C:/Windows/system32',
+      'C:/Windows',
+      'C:/ProgramData/scoop/apps/go/1.24.7/bin',
+      'C:/ProgramData/scoop/apps/nim/2.2.6/bin',
+      'C:/ProgramData/scoop/apps/cmake/3.31.6/bin',
+      'C:/ProgramData/scoop/apps/python/3.13.5',
+      'C:/ProgramData/scoop/apps/python/3.13.5/Scripts',
+      'C:/ProgramData/scoop/apps/mingw-winlibs/15.2.0-13.0.0-r5/bin',
+      'C:/ProgramData/scoop/apps/vcredist2022/14.44.35211.0',
+      'C:/ProgramData/scoop/apps/openssl-lts/3.0.18/bin',
+      'C:/ProgramData/scoop/apps/protobuf/3.20.1/bin',
+      'C:/ProgramData/scoop/apps/inno-setup/6.5.4',
+      'C:/ProgramData/scoop/apps/git/current/bin',
+      'C:/ProgramData/scoop/shims',
+      'C:/BuildTools/MSBuild/Current/Bin',
+      'C:/BuildTools/VC/Auxiliary/Build',
+      'C:/Program Files/DigiCert/DigiCert One Signing Manager Tools',
+    ]
+    binPaths.each { dir -> if (!fileExists(dir)) { error("Missing PATH directory: '${dir}'") } }
+    /* These Git Bash paths can't be checked with fileExists(). */
+    return (['/mingw64/bin', '/usr/bin', '/bin'] + binPaths + extraPaths).join(';')
   }
 }
 
