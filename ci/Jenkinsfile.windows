@@ -55,6 +55,7 @@ pipeline {
       numToKeepStr: '10',
       daysToKeepStr: '30',
       artifactNumToKeepStr: '1',
+      artifactDaysToKeepStr: '30'
     ))
     /* Allows combined build to copy */
     copyArtifactPermission('/status-app/*')
