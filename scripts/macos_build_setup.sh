@@ -10,6 +10,11 @@ CMAKE_FORMULA_URL="https://raw.githubusercontent.com/Homebrew/homebrew-core/${CM
 BREW_PREFIX=$(brew --prefix)
 CMAKE_INSTALL_DIR="${BREW_PREFIX}/Cellar/cmake/${CMAKE_VERSION}"
 
+# Prevent Homebrew from uprading things without permission.
+export HOMEBREW_NO_INSTALL_UPGRADE=1
+export HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK=1
+export HOMEBREW_NO_ENV_HINTS=1
+
 function check_version {
   if [[ "$(uname -s)" != "Darwin" ]]; then
     echo "ERROR: Installer intended for MacOS/Darwin!"
@@ -30,13 +35,11 @@ function install_qt {
 
 function install_cmake {
   echo "Installing CMake ${CMAKE_VERSION}"
-
-  echo "Detected Homebrew prefix: ${BREW_PREFIX}"
-  echo "CMake will be installed to: ${CMAKE_INSTALL_DIR}"
-
-  curl -o /tmp/cmake.rb "${CMAKE_FORMULA_URL}"
-  brew install /tmp/cmake.rb
-  rm /tmp/cmake.rb
+  TAP_DIR="${BREW_PREFIX}/Library/Taps/local/homebrew-tmp/Formula"
+  mkdir -p "${TAP_DIR}"
+  curl -s -o "${TAP_DIR}/cmake.rb" "${CMAKE_FORMULA_URL}"
+  brew uninstall cmake || true
+  brew install 'local/tmp/cmake'
 }
 
 function get_go_arch {
