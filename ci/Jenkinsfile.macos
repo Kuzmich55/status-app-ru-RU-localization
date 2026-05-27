@@ -43,6 +43,11 @@ pipeline {
       description: 'Extra Nim flags. Examples: --verbosity:2 --passL:"-v" --passC:"-v"',
       defaultValue: ''
     )
+    string(
+      name: 'STATUS_GO_REF',
+      description: 'Override vendor/status-go submodule to this SHA/ref.',
+      defaultValue: ''
+    )
   }
 
   options {
@@ -94,7 +99,7 @@ pipeline {
     RELEASE =                "${params.RELEASE}"
     INCLUDE_DEBUG_SYMBOLS =  "${params.INCLUDE_DEBUG_SYMBOLS}"
     VERBOSE =                "${params.VERBOSE}"
-    USE_SIMULATED_KEYCARD = "${params.USE_SIMULATED_KEYCARD}"
+    USE_SIMULATED_KEYCARD =  "${params.USE_SIMULATED_KEYCARD}"
     /* FIXME: figure out why NIMFLAGS are not respected */
     XDG_CACHE_HOME = "${env.WORKSPACE_TMP}/.cache"
     /* Ensure nimcache is not shared between builds. */
@@ -113,6 +118,12 @@ pipeline {
     stage('Fetch submodules') {
       steps {
         sh 'git submodule update --init --recursive'
+      }
+    }
+    stage('Override status-go ref') {
+      when { expression { params.STATUS_GO_REF?.trim() } }
+      steps {
+        sh "./scripts/override-status-go-ref.sh ${params.STATUS_GO_REF}"
       }
     }
     stage('Deps') {

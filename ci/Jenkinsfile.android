@@ -34,6 +34,11 @@ pipeline {
       description: 'Level of verbosity based on nimbus-build-system setup.',
       choices: ['0','1','2','3']
     )
+    string(
+      name: 'STATUS_GO_REF',
+      description: 'Override vendor/status-go submodule to this SHA/ref.',
+      defaultValue: ''
+    )
   }
 
   options {
@@ -98,6 +103,13 @@ pipeline {
     stage('Fetch submodules') {
       steps {
         sh 'git submodule update --init --recursive'
+      }
+    }
+
+    stage('Override status-go ref') {
+      when { expression { params.STATUS_GO_REF?.trim() } }
+      steps {
+        sh "./scripts/override-status-go-ref.sh ${params.STATUS_GO_REF}"
       }
     }
 
