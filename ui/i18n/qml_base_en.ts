@@ -16485,10 +16485,6 @@ to load</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>On:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Add assets</source>
         <translation type="unfinished"></translation>
     </message>

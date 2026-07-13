@@ -64,6 +64,39 @@ proc prefetchParaswapSupportRetrieved(self: Service, response: string) {.slot.} 
   except Exception as ex:
     error "prefetchParaswapSupportRetrieved", err = ex.msg
 
+proc prefetchLiFiSupport(self: Service) =
+  let chainIds = self.networkService.getEnabledChainIds()
+  if chainIds.len == 0:
+    return
+  # One task per chain so the cache fills incrementally as each RPC completes.
+  for chainId in chainIds:
+    if chainId <= 0:
+      continue
+    let arg = PrefetchLiFiSupportTaskArg(
+      tptr: prefetchLiFiSupportTask,
+      vptr: cast[uint](self.vptr),
+      slot: "prefetchLiFiSupportRetrieved",
+      chainId: chainId,
+    )
+    self.threadpool.start(arg)
+
+proc prefetchLiFiSupportRetrieved(self: Service, response: string) {.slot.} =
+  try:
+    let parsedJson = response.parseJson
+    var errorString: string
+    discard parsedJson.getProp("error", errorString)
+    if errorString.len > 0:
+      return
+    if not parsedJson.hasKey("chainId") or not parsedJson.hasKey("supported"):
+      return
+    let chainId = parsedJson["chainId"].getInt()
+    if chainId <= 0:
+      return
+    let supported = parsedJson["supported"].getBool()
+    self.chainsSupportedForSwapViaLiFi[chainId] = supported
+  except Exception as ex:
+    error "prefetchLiFiSupportRetrieved", err = ex.msg
+
 proc applyRefreshTokensData(self: Service, tokenDtos: seq[TokenDtoSafe], allTokenDtos: seq[TokenDtoSafe], tokenPrefsNode: JsonNode) =
   let tokens = tokenDtos.map(t => createTokenItem(t))
 
@@ -180,12 +213,14 @@ proc init*(self: Service) =
   self.events.on(SIGNAL_NETWORK_MODE_UPDATED) do(e:Args):
     self.asyncRefreshTokens()
     self.prefetchParaswapSupport()
+    self.prefetchLiFiSupport()
 
   self.events.on(SIGNAL_CURRENCY_UPDATED) do(e:Args):
     self.rebuildMarketData()
 
   self.asyncRefreshTokens(fetchAllTokens = true)
   self.prefetchParaswapSupport()
+  self.prefetchLiFiSupport()
 
 proc getMandatoryTokenGroupKeys*(self: Service): seq[string] =
   let tokenKeys = getMandatoryTokenKeys()
@@ -235,6 +270,40 @@ proc onAsyncBuildGroupsForChainDone(self: Service, response: string) {.slot.} =
 proc getGroupsForChainLoading*(self: Service): bool =
   return self.groupsForChainLoading
 
+proc buildGroupsForChainTo*(self: Service, chainId: int) =
+  if chainId <= 0:
+    warn "invalid chainId", chainId = chainId
+    return
+  self.groupsForChainToLoading = true
+  let arg = AsyncBuildGroupsForChainTaskArg(
+    tptr: asyncBuildGroupsForChainTask,
+    vptr: cast[uint](self.vptr),
+    slot: "onAsyncBuildGroupsForChainToDone",
+    chainId: chainId,
+  )
+  self.threadpool.start(arg)
+
+proc onAsyncBuildGroupsForChainToDone(self: Service, response: string) {.slot.} =
+  self.groupsForChainToLoading = false
+  try:
+    let env = Json.decode(response, BuildGroupsForChainResponse, allowUnknownFields = true)
+    if env.error.len > 0:
+      error "async build groups for chain (to) failed", errDescription = env.error
+      self.events.emit(SIGNAL_GROUPS_FOR_CHAIN_TO_LOADED, Args())
+      return
+    let tokens = env.tokens.map(t => createTokenItem(t))
+    var groupsByKey = initTable[string, TokenGroupItem](tokens.len)
+    createTokenGroupsFromTokens(tokens, groupsByKey)
+    self.groupsForChainTo = toSeq(groupsByKey.values)
+    sortTokenGroupsByName(self.groupsForChainTo)
+    self.events.emit(SIGNAL_GROUPS_FOR_CHAIN_TO_LOADED, Args())
+  except Exception as e:
+    error "error processing async build groups for chain (to)", msg = e.msg
+    self.events.emit(SIGNAL_GROUPS_FOR_CHAIN_TO_LOADED, Args())
+
+proc getGroupsForChainToLoading*(self: Service): bool =
+  return self.groupsForChainToLoading
+
 proc asyncFetchAllTokenGroups*(self: Service) =
   self.allTokenGroupsLoading = true
   let arg = AsyncFetchAllTokenGroupsTaskArg(
@@ -270,6 +339,9 @@ proc getAllTokenGroupsLoading*(self: Service): bool =
 
 proc getGroupsForChain*(self: Service): var seq[TokenGroupItem] =
   return self.groupsForChain
+
+proc getGroupsForChainTo*(self: Service): var seq[TokenGroupItem] =
+  return self.groupsForChainTo
 
 proc getAllTokenLists*(self: Service): var seq[TokenListItem] =
   return self.allTokenLists
@@ -395,6 +467,17 @@ proc isChainSupportedForSwapViaParaswap*(self: Service, chainId: int): bool =
     return self.chainsSupportedForSwapViaParaswap[chainId]
   let supported = isChainSupportedForSwapViaParaswap(chainId)
   self.chainsSupportedForSwapViaParaswap[chainId] = supported
+  return supported
+
+## Checks if the chain is supported for swap via LI.FI
+proc isChainSupportedForSwapViaLiFi*(self: Service, chainId: int): bool =
+  if chainId <= 0:
+    warn "invalid chainId", chainId = chainId
+    return false
+  if self.chainsSupportedForSwapViaLiFi.hasKey(chainId):
+    return self.chainsSupportedForSwapViaLiFi[chainId]
+  let supported = isChainSupportedForSwapViaLiFi(chainId)
+  self.chainsSupportedForSwapViaLiFi[chainId] = supported
   return supported
 
 proc getTokenListUpdatedAt*(self: Service): int64 =

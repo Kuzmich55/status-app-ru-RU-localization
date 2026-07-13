@@ -16426,10 +16426,6 @@ to load</source>
         <translation>스왑</translation>
     </message>
     <message>
-        <source>On:</source>
-        <translation>켜짐:</translation>
-    </message>
-    <message>
         <source>Add assets</source>
         <translation>자산 추가</translation>
     </message>

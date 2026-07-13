@@ -16501,10 +16501,6 @@ al cargar</translation>
         <translation></translation>
     </message>
     <message>
-        <source>On:</source>
-        <translation>En:</translation>
-    </message>
-    <message>
         <source>Add assets</source>
         <translation>Agregar activos</translation>
     </message>
