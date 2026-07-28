@@ -88,11 +88,6 @@ pipeline {
               }
             }
             stage('Windows E2E Tests') {
-              when {
-                expression {
-                  env.JOB_NAME.toLowerCase().contains('nightly')
-                }
-              }
               steps {
                 catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
                   script {
