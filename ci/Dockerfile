@@ -2,6 +2,7 @@ ARG QT_VERSION="6.11.0"
 ARG QT_MODULES="qtwebchannel qtwebview qtwebsockets qt5compat qtmultimedia qtwebengine qtpositioning qtserialport qtshadertools qtimageformats qtscxml qthttpserver"
 ARG LINUXDEPLOYQT_VERSION="20250615-0393b84"
 ARG PCSCLITE_VERSION="2.2.3"
+ARG PCSCLITE_SHA256="6e0205a47ec0dd10c000965ee88e08e60c2f7f3ce7280ce0e624915821ea2402"
 ARG NIM_VERSION="2.2.4"
 
 # QT Installation Image --------------------------------------------------------
@@ -24,7 +25,7 @@ RUN python3 -m pip install setuptools \
 # PCSC Lite Build Image --------------------------------------------------------
 FROM ubuntu:22.04 AS pcsc-build
 
-ARG PCSCLITE_VERSION
+ARG PCSCLITE_VERSION PCSCLITE_SHA256
 
 # To fix: https://github.com/status-im/status-app/issues/16768
 # https://blog.apdu.fr/posts/2024/05/pcsc-lite-now-uses-meson-build-tool/
@@ -34,9 +35,10 @@ RUN apt-get update \
     meson ninja-build libglib2.0-dev libexpat1-dev python3-pip \
  && apt-get -qq clean
 
-RUN wget https://pcsclite.apdu.fr/files/pcsc-lite-${PCSCLITE_VERSION}.tar.xz -O /tmp/pcsc.tar.xz
-RUN mkdir /pcsc
-RUN tar -xJf /tmp/pcsc.tar.xz -C /pcsc --strip-components=1
+RUN wget -q "https://github.com/LudovicRousseau/PCSC/archive/refs/tags/${PCSCLITE_VERSION}.tar.gz" -O /tmp/pcsc.tar.gz \
+ && echo "${PCSCLITE_SHA256} /tmp/pcsc.tar.gz" | sha256sum -c \
+ && mkdir /pcsc \
+ && tar -xzf /tmp/pcsc.tar.gz -C /pcsc --strip-components=1
 
 WORKDIR /pcsc
 

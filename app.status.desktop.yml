@@ -69,8 +69,8 @@ modules:
       - -Dusbdropdir=/app/lib/pcsc/drivers
     sources:
       - type: archive
-        url: https://pcsclite.apdu.fr/files/pcsc-lite-2.2.3.tar.xz
-        sha256: cab1e62755713f62ce1b567954dbb0e9a7e668ffbc3bbad3ce85c53f8f4e00a4
+        url: https://github.com/LudovicRousseau/PCSC/archive/refs/tags/2.2.3.tar.gz
+        sha256: 6e0205a47ec0dd10c000965ee88e08e60c2f7f3ce7280ce0e624915821ea2402
 
   - name: libusb
     buildsystem: autotools
@@ -92,8 +92,8 @@ modules:
       - -Dudev-rules=false
     sources:
       - type: archive
-        url: https://ccid.apdu.fr/files/ccid-1.7.0.tar.xz
-        sha256: 2a040141109c1652caf06b41d9ed580b3ce706d478ebafd323b9085eb04e45a1
+        url: https://github.com/LudovicRousseau/CCID/archive/refs/tags/1.7.0.tar.gz
+        sha256: 4abe76010a72944e02e8d5d4d60ba665f941891eee2a35f77fd35cebc095e14b
 
   # Our app. build-commands runs flatpak-copy-to-app.sh inside the sandbox.
   # build-args grants the build sandbox read-only access to the host so the
