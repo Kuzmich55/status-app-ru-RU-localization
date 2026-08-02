@@ -19,7 +19,7 @@ flowchart LR
     seaqt --> nimqml{{"NimQML"}}
     nimqml --> nim["Middleware (Nim)"]
     nim --> statusgo{{"Backend (status-go)"}}
-    nim --> nimstatusgo{{"nim-status-go"}}
+    nim --> nimstatusgo(["status-go Nim bindings"])
     nimstatusgo --> statusgo
     statusgo --> waku{{"Waku"}}
     statusgo --> providers[["Wallet providers"]]
@@ -38,7 +38,7 @@ flowchart LR
     click nim "https://github.com/status-im/status-app/tree/master/src" "Link to the Nim code"
     click statusgo "https://github.com/status-im/status-go" "Link to the Status-Go repo"
     click waku "https://github.com/waku-org" "Link to the Waku org"
-    click nimstatusgo "https://github.com/status-im/nim-status-go" "Link to nim-status-go repo"
+    click nimstatusgo "https://github.com/status-im/status-app/tree/master/src/status_go.nim" "Link to the status-go Nim bindings"
 ```
 
 ## Standard Nim module

@@ -10,7 +10,7 @@
 // the same symbols and forward them to a separate Android service process via Java.
 //
 // Note: For now, the Java side can be a placeholder. This file focuses on:
-// - providing the symbols required by the Nim glue (nim-status-go wrappers)
+// - providing the symbols required by the Nim glue (src/status_go wrappers)
 // - returning heap-allocated cstrings compatible with status-go's Free()
 //
 // The service-side implementation will be added next (Binder + separate process).

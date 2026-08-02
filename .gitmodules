@@ -87,9 +87,6 @@
 [submodule "vendor/status-go"]
 	path = vendor/status-go
 	url = https://github.com/status-im/status-go
-[submodule "vendor/nim-status-go"]
-	path = vendor/nim-status-go
-	url = https://github.com/status-im/nim-status-go.git
 [submodule "vendor/nim-stint"]
 	path = vendor/nim-stint
 	url = https://github.com/status-im/nim-stint.git
