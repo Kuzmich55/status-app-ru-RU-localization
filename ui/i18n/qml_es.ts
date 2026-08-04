@@ -1705,6 +1705,10 @@ de &quot;%1&quot; a &quot;%2&quot;</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>This channel no longer exists</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Invite People</source>
         <translation>Invitar personas</translation>
     </message>
