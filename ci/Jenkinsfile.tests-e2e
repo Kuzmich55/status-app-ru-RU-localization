@@ -11,6 +11,7 @@ pipeline {
            '--cap-add=SYS_ADMIN ' +
            '--security-opt=apparmor:unconfined ' +
            '--device=/dev/fuse ' +
+           '--group-add docker ' +
            '--volume=/var/run/docker.sock:/var/run/docker.sock ' +
            '--volume=/home/jenkins/.squish-license:/home/jenkins/.squish-license ' +
            '--volume=/opt/squish-runner-9.2.2-qt-6.11:/opt/squish-runner-9.2.2-qt-6.11 ' +

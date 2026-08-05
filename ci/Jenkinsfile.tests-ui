@@ -15,6 +15,7 @@ pipeline {
       args '--cap-add SYS_ADMIN ' +
            '--security-opt apparmor:unconfined ' +
            '--device /dev/fuse ' +
+           '--group-add docker ' +
            '--volume=/var/run/docker.sock:/var/run/docker.sock ' +
            '--network=host ' +
            '--user jenkins'
