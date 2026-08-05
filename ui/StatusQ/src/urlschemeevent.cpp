@@ -9,7 +9,9 @@ using namespace Status;
     #include <QJniObject>
 #endif // Q_OS_ANDROID
 
+#include <QDebug>
 #include <QDesktopServices>
+#include <QGuiApplication>
 
 void UrlSchemeEvent::registerUrlHandler()
 {
@@ -41,6 +43,44 @@ bool UrlSchemeEvent::eventFilter(QObject* obj, QEvent* event)
 #endif
 
     return QObject::eventFilter(obj, event);
+}
+
+void UrlSchemeEvent::watchApplicationState()
+{
+    // appBackgrounded/appForegrounded drive the iOS pausable-services
+    // bridge (src/app/core/services_pause_bridge.nim): pause on suspension,
+    // resume — and media-server rebind — on return to the foreground.
+    // Under QCoreApplication (unit tests) there is no application state; skip.
+    if (auto* app = qobject_cast<QGuiApplication*>(QCoreApplication::instance())) {
+        connect(app, &QGuiApplication::applicationStateChanged, this,
+                [this](Qt::ApplicationState state) {
+                    switch (state) {
+                    case Qt::ApplicationActive:
+                        emit appForegrounded();
+                        break;
+                    case Qt::ApplicationSuspended:
+                        emit appBackgrounded();
+                        break;
+                    case Qt::ApplicationInactive:
+                        // Transient dip (share sheets, system alerts, app
+                        // switcher) — deliberately not a backgrounding.
+                        break;
+                    default:
+                        qWarning() << "Unhandled application state:" << state;
+                        break;
+                    }
+                });
+    }
+}
+
+void UrlSchemeEvent::emitAppForegroundedToQt()
+{
+    emit appForegrounded();
+}
+
+void UrlSchemeEvent::emitAppBackgroundedToQt()
+{
+    emit appBackgrounded();
 }
 
 void UrlSchemeEvent::emitDeepLinkToQt(const QString& url)
