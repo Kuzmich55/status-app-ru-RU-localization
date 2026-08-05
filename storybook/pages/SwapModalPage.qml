@@ -81,7 +81,7 @@ SplitView {
             signal transactionSent(var chainId, var txHash, var uuid, var error)
             signal transactionSendingComplete(var txHash, var status)
 
-            readonly property var accounts: WalletAccountsModel {}
+            accounts: WalletAccountsModel {}
 
             function fetchSuggestedRoutes(uuid, accountFrom, accountTo, amount, tokenFrom, tokenTo,
                                           fromChainID, toChainID, preferredChainIDs, sendType) {
@@ -121,6 +121,8 @@ SplitView {
         TokensStoreMock {
             id: tokensStore
             tokenGroupsModel: TokenGroupsModel {}
+            tokenGroupsForChainModel: ListModel {}
+            tokenGroupsForChainToModel: ListModel {}
             _displayAssetsBelowBalanceThresholdDisplayAmountFunc: () => 0
         }
 
@@ -172,6 +174,8 @@ SplitView {
                 destroyOnClose: true
                 swapInputParamsForm: adaptor.swapFormData
                 swapAdaptor: adaptor
+                savedAddressesModel: ListModel {}
+                recentRecipientsModel: WalletTransactionsModel {}
                 Binding {
                     target: swapInputParamsForm
                     property: "fromTokensKey"
@@ -283,6 +287,7 @@ SplitView {
             }
 
             Button {
+                objectName: "simulateNoApprovalButton"
                 text: "simulate happy path no approval needed"
                 onClicked: {
                     d.resetValues()
@@ -296,6 +301,7 @@ SplitView {
             }
 
             Button {
+                objectName: "simulateApprovalNeededButton"
                 text: "simulate happy path with approval needed"
                 onClicked: {
                     d.resetValues()

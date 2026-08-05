@@ -11724,6 +11724,13 @@ selhalo</translation>
     </message>
 </context>
 <context>
+    <name>NetworkChipFilter</name>
+    <message>
+        <source>All</source>
+        <translation type="unfinished">Všechny</translation>
+    </message>
+</context>
+<context>
     <name>NetworkConnectionStore</name>
     <message>
         <source>Requires internet connection</source>
@@ -14671,6 +14678,10 @@ selhalo</translation>
         <translation>Hledat token nebo zadat adresu tokenu</translation>
     </message>
     <message>
+        <source>Paste</source>
+        <translation type="unfinished">Vložit</translation>
+    </message>
+    <message>
         <source>Loading more tokens...</source>
         <translation>Načítání více tokenů...</translation>
     </message>
@@ -16646,18 +16657,21 @@ selhalo</translation>
     </message>
 </context>
 <context>
+    <name>SwapFromAccountPopup</name>
+    <message>
+        <source>From account</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>SwapInputPanel</name>
-    <message>
-        <source>Pay</source>
-        <translation>Zaplatit</translation>
-    </message>
-    <message>
-        <source>Receive</source>
-        <translation>Přijmout</translation>
-    </message>
     <message>
         <source>Your assets on %1</source>
         <translation type="unfinished">Vaše aktiva na %1</translation>
+    </message>
+    <message>
+        <source>Your assets</source>
+        <translation type="unfinished">Vaše aktiva</translation>
     </message>
     <message>
         <source>Popular assets</source>
@@ -16679,16 +16693,21 @@ selhalo</translation>
         <translation>Přidat %1</translation>
     </message>
     <message>
-        <source>Max slippage:</source>
-        <translation>Max. skluz:</translation>
+        <source>%1 s</source>
+        <comment>short for seconds</comment>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>N/A</source>
-        <translation>N/A</translation>
+        <source>Best return</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Max fees:</source>
-        <translation>Max. poplatky:</translation>
+        <source>by %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>via %1</source>
+        <translation type="unfinished">přes %1</translation>
     </message>
     <message>
         <source>Approving %1</source>
@@ -16697,6 +16716,10 @@ selhalo</translation>
     <message>
         <source>Approve %1</source>
         <translation>Schválit %1</translation>
+    </message>
+    <message>
+        <source>Confirm swap</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Approving %1 spending cap to Swap</source>
@@ -16816,6 +16839,13 @@ selhalo</translation>
     <message>
         <source>Max. fees on %1</source>
         <translation>Max. poplatky na %1</translation>
+    </message>
+</context>
+<context>
+    <name>SwapToAccountPopup</name>
+    <message>
+        <source>Send to</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

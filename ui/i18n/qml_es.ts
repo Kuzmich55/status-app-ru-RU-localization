@@ -11670,6 +11670,13 @@ al cargar</translation>
     </message>
 </context>
 <context>
+    <name>NetworkChipFilter</name>
+    <message>
+        <source>All</source>
+        <translation type="unfinished">Todos</translation>
+    </message>
+</context>
+<context>
     <name>NetworkConnectionStore</name>
     <message>
         <source>Requires internet connection</source>
@@ -14607,6 +14614,10 @@ al cargar</translation>
         <translation>Buscar token o facilitar dirección del token</translation>
     </message>
     <message>
+        <source>Paste</source>
+        <translation type="unfinished">Pegar</translation>
+    </message>
+    <message>
         <source>Loading more tokens...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -16571,18 +16582,21 @@ al cargar</translation>
     </message>
 </context>
 <context>
+    <name>SwapFromAccountPopup</name>
+    <message>
+        <source>From account</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>SwapInputPanel</name>
-    <message>
-        <source>Pay</source>
-        <translation>Pagar</translation>
-    </message>
-    <message>
-        <source>Receive</source>
-        <translation>Recibir</translation>
-    </message>
     <message>
         <source>Your assets on %1</source>
         <translation type="unfinished">Tus activos en %1</translation>
+    </message>
+    <message>
+        <source>Your assets</source>
+        <translation type="unfinished">Tus activos</translation>
     </message>
     <message>
         <source>Popular assets</source>
@@ -16604,16 +16618,21 @@ al cargar</translation>
         <translation>Agregar %1</translation>
     </message>
     <message>
-        <source>Max slippage:</source>
-        <translation></translation>
+        <source>%1 s</source>
+        <comment>short for seconds</comment>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>N/A</source>
-        <translation>N/D</translation>
+        <source>Best return</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Max fees:</source>
-        <translation></translation>
+        <source>by %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>via %1</source>
+        <translation type="unfinished">vía %1</translation>
     </message>
     <message>
         <source>Approving %1</source>
@@ -16622,6 +16641,10 @@ al cargar</translation>
     <message>
         <source>Approve %1</source>
         <translation>Aprobar %1</translation>
+    </message>
+    <message>
+        <source>Confirm swap</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Approving %1 spending cap to Swap</source>
@@ -16741,6 +16764,13 @@ al cargar</translation>
     <message>
         <source>Max. fees on %1</source>
         <translation>Comisiones máx. en %1</translation>
+    </message>
+</context>
+<context>
+    <name>SwapToAccountPopup</name>
+    <message>
+        <source>Send to</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
