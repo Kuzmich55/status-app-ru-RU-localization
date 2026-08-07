@@ -61,7 +61,7 @@ if [[ "${OS}" == "android" ]]; then
   androiddeployqt \
     --input "$BUILD_DIR/android-${OUTPUT_NAME}-deployment-settings.json" \
     --output "$BUILD_DIR/android-build" \
-    --android-platform android-35 \
+    --android-platform android-36 \
     --verbose --aux-mode
 
   # Package service-only libs into the APK without adding them to Qt's

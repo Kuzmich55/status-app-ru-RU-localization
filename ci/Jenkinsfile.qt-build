@@ -20,7 +20,7 @@ pipeline {
     )
     string(
       name: 'DOCKER_TAG_ANDROID',
-      defaultValue: '1.0.0-qt6.11.0-android',
+      defaultValue: '1.0.1-qt6.11.0-android',
       description: 'Docker image tag for the Andorid image'
     )
     string(
@@ -51,7 +51,7 @@ pipeline {
     string(
       name: 'ANDROID_API_LEVEL',
       description: 'Android API level',
-      defaultValue: '35',
+      defaultValue: '36',
     )
     string(
       name: 'ANDROID_NDK_VERSION',

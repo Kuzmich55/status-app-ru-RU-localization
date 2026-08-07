@@ -6,7 +6,7 @@
 ARG QT_VERSION="6.11.0"
 ARG QT_MODULES="qt5compat qtmultimedia qtwebsockets qtpositioning qtshadertools qtimageformats qtwebview qtconnectivity qtlottie qtscxml qtwebchannel"
 ARG JAVA_VERSION=17
-ARG ANDROID_API_LEVEL=35
+ARG ANDROID_API_LEVEL=36
 ARG ANDROID_NDK_VERSION=27.2.12479018
 ARG GOLANG_VERSION="1.24.7"
 ARG NIM_VERSION="2.2.4"

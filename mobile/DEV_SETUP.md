@@ -55,11 +55,11 @@ in with the same apple ID that's part of the development team set up in Apple De
 - JDK 17
   - Settings > Build, Execution, Deployment > Build Tools > Gradle: Gradle JDK - Download JDK - Select 17 
 - Android SDK
-  - Settings > Languages & Framework > Android SDK - Select Android 15 - Apply
+  - Settings > Languages & Framework > Android SDK - Select Android 16 - Apply
 - Android NDK 27.2.12479018
   - Settings > Languages & Framework > Android SDK > SDK Tools tab - Check Show Package Details - NDK (Side by side) > Select 27.2.12479018 - Apply
-- Platform android-35
-	- Installed with Android 15
+- Platform android-36
+	- Installed with Android 16
 - Android emulator (optional)
   - Installed with Android Studio
 - Android command-line tools
@@ -107,7 +107,7 @@ qmake --version # prints qmake for android
 java --version # 17.0.14
 emulator --version # execution works
 echo $ANDROID_NDK_ROOT # points to 27.2.12479018
-ls -l $ANDROID_SDK_ROOT/platforms/android-35 # android-35 in installed
+ls -l $ANDROID_SDK_ROOT/platforms/android-36 # android-36 in installed
 avdmanager --version
 sdkmanager --version
 adb --version
@@ -151,7 +151,7 @@ The build system uses several environment variables to control the build process
 #### Qt6
 - iOS minimum deployment target: iOS 26
 - iOS simulator: iPad Pro
-- Android target: Android 35
+- Android target: Android 36
 - Android NDK: 27.2.12479018
 - Android API: 28
 - JDK: 17

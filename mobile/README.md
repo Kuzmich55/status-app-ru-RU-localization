@@ -38,12 +38,12 @@ sudo apt-get update
 sudo apt install android-sdk-common
 
 sdkmanager --install \
-"build-tools;35.0.1" \
+"build-tools;36.0.0" \
 "emulator" \
 "platform-tools" \
-"platforms;android-35" \
+"platforms;android-36" \
 "ndk;27.2.12479018" \
-"system-images;android-35;google_apis;arm64-v8a"
+"system-images;android-36;google_apis;arm64-v8a"
 ```
 
 2. **Verify installation:**
