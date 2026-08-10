@@ -16063,22 +16063,6 @@ selhalo</translation>
         <source>Edit</source>
         <translation type="unfinished">Upravit</translation>
     </message>
-    <message>
-        <source>Cut</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Copy</source>
-        <translation type="unfinished">Kopírovat</translation>
-    </message>
-    <message>
-        <source>Paste</source>
-        <translation type="unfinished">Vložit</translation>
-    </message>
-    <message>
-        <source>Select All</source>
-        <translation type="unfinished"></translation>
-    </message>
 </context>
 <context>
     <name>StatusChatListCategoryItem</name>
@@ -16692,7 +16676,7 @@ selhalo</translation>
     </message>
 </context>
 <context>
-    <name>StatusTextField</name>
+    <name>StatusTextEditMenu</name>
     <message>
         <source>Cut</source>
         <translation type="unfinished"></translation>
