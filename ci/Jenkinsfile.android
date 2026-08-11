@@ -39,6 +39,11 @@ pipeline {
       description: 'Override vendor/status-go submodule to this SHA/ref.',
       defaultValue: ''
     )
+    booleanParam(
+      name: 'RUN_E2E',
+      description: 'Trigger the Android E2E job after the build. Off for PRs, enable for manual runs.',
+      defaultValue: params.RUN_E2E ?: false
+    )
   }
 
   options {
@@ -174,7 +179,7 @@ pipeline {
     }
 
     stage('E2E') {
-      when { expression { utils.isPRBuild() } }
+      when { expression { params.RUN_E2E } }
       steps { script {
         build(
           job: 'status-app/e2e/prs-android',
