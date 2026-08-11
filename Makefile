@@ -512,6 +512,7 @@ $(STATUSGO): | deps status-go-deps $(NIMSDS_LIBFILE) platform-cleanup
 
 status-go: $(STATUSGO)
 
+status-go-deps: export GOPROXY ?= https://proxy.golang.org|direct
 status-go-deps:
 	go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.34.1
 
