@@ -128,6 +128,13 @@ pipeline {
             }
           }
         }
+        stage('Linux/Flatpak/x86_64') {
+          steps { script {
+            flatpak_x86_64 = getArtifacts(
+              'Linux/Flatpak', jenkins.Build('status-app/systems/linux-flatpak/x86_64/package')
+            )
+          } }
+        }
         stage('MacOS/aarch64') { steps { script {
           macos_aarch64 = getArtifacts(
             'MacOS/aarch64', jenkins.Build('status-app/systems/macos/aarch64/package')
