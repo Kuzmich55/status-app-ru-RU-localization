@@ -529,8 +529,10 @@ Window {
                     applicationWindow.appIsReady = true
                     applicationWindow.storeAppState()
                 }
-                if (mainReady && d.showSkippedBiometricFlow)
+                if (mainReady && d.showSkippedBiometricFlow) {
+                    d.showSkippedBiometricFlow = false
                     loader.item.showEnableBiometricsFlow()
+                }
             }
 
             onStatusChanged: {
@@ -550,6 +552,10 @@ Window {
                 Global.appIsReady = true
                 applicationWindow.appIsReady = true
                 applicationWindow.storeAppState()
+                if (d.showSkippedBiometricFlow && loader.item) {
+                    d.showSkippedBiometricFlow = false
+                    loader.item.showEnableBiometricsFlow()
+                }
             }
         }
 
