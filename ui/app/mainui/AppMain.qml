@@ -1444,7 +1444,7 @@ Item {
 
         volume: convertVolume(rootStore.volume)
         muted: !rootStore.notificationSoundsEnabled
-        source: "qrc:/imports/assets/audio/error.wav"
+        source: "qrc:/imports/assets/audio/error.mp3"
 
         onIsErrorChanged: {
             if(isError) {
